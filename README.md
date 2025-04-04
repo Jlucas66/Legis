@@ -1,1 +1,1 @@
-# Legis
+Projeto para implementação de um sistema para busca de normas.
