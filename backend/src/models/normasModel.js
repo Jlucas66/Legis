@@ -1,9 +1,9 @@
-const normas = [{orgão: "", 
+const normas = [{orgao: "", 
     tipo: "", 
-    número: "", 
+    numero: "", 
     data: new Date(""), 
     ementa: "", 
     status: "", 
-    ações: ["verPDF", "modificarNorma", "---", "excluirNorma"]}];
+    acoes: ["verPDF", "modificarNorma", "---", "excluirNorma"]}];
 
 module.exports = normas;

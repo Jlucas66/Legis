@@ -9,9 +9,9 @@ router.use((req, res, next) => {
 });
 
 router.get("/", normasController.listarNormas);
-// router.post();
-// router.put();
-// router.patch();
-// router.delete();
+router.post("/", normasController.adicionarNorma);
+router.put("/:numero", normasController.modificarNorma);
+router.get("/:numero", normasController.buscarNormaPorNumero);
+router.delete("/:numero", normasController.excluirNorma);
 
 module.exports = router;
