@@ -1,6 +1,6 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="lHh Lpr lFf" >
+    <q-header elevated class="bg-black text-white">
       <q-toolbar>
         <q-btn
           flat
@@ -11,11 +11,20 @@
           @click="toggleLeftDrawer"
         />
 
+        <q-img 
+          src="~assets/CpLogo.png"
+          width="80px"
+          height="80px"
+          class="q-mr-sm"> 
+
+        </q-img>
+
         <q-toolbar-title>
-          Quasar App
+          LEGIS-PCPE <br/>
+          Polícia Civil de Pernambuco
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+      
       </q-toolbar>
     </q-header>
 
@@ -51,46 +60,34 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    title: 'Unisa',
+    caption: '',
+    icon: 'home',
+    link: ''
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
+    title: 'Normas',
+    caption: '',
     icon: 'code',
-    link: 'https://github.com/quasarframework'
+    link: ''
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
+    title: 'Órgãos',
+    caption: '',
     icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    link: ''
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+    title: 'Tipo de Documento',
+    caption: '',
+    icon: 'drive_file_move',
+    link: ''
   },
   {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+    title: 'Sair',
+    caption: '',
+    icon: 'exit',
+    link: ''
   }
 ]
 
