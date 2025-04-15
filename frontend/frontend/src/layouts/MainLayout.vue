@@ -2,14 +2,14 @@
   <q-layout view="lHh Lpr lFf" >
     <q-header elevated class="bg-black text-white">
       <q-toolbar>
-        <q-btn
+        <!-- <q-btn
           flat
           dense
           round
           icon="menu"
           aria-label="Menu"
           @click="toggleLeftDrawer"
-        />
+        /> -->
 
         <q-img 
           src="~assets/CpLogo.png"
@@ -30,10 +30,9 @@
 
     <q-drawer
       v-model="leftDrawerOpen"
-      show-if-above
       bordered
     >
-      <q-list>
+      <!-- <q-list>
         <q-item-label
           header
         >
@@ -45,7 +44,7 @@
           :key="link.title"
           v-bind="link"
         />
-      </q-list>
+      </q-list> -->
     </q-drawer>
 
     <q-page-container>
@@ -56,44 +55,44 @@
 
 <script setup>
 import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+// import EssentialLink from 'components/EssentialLink.vue'
 
-const linksList = [
-  {
-    title: 'Unisa',
-    caption: '',
-    icon: 'home',
-    link: ''
-  },
-  {
-    title: 'Normas',
-    caption: '',
-    icon: 'code',
-    link: ''
-  },
-  {
-    title: 'Órgãos',
-    caption: '',
-    icon: 'chat',
-    link: ''
-  },
-  {
-    title: 'Tipo de Documento',
-    caption: '',
-    icon: 'drive_file_move',
-    link: ''
-  },
-  {
-    title: 'Sair',
-    caption: '',
-    icon: 'exit',
-    link: ''
-  }
-]
+// const linksList = [
+//   {
+//     title: 'Unisa',
+//     caption: 'Administração',
+//     icon: 'home',
+//     link: ''
+//   },
+//   {
+//     title: 'Normas',
+//     caption: 'Administração',
+//     icon: 'code',
+//     link: ''
+//   },
+//   {
+//     title: 'Órgãos',
+//     caption: 'Padronização',
+//     icon: 'chat',
+//     link: ''
+//   },
+//   {
+//     title: 'Tipo de Documento',
+//     caption: '',
+//     icon: 'drive_file_move',
+//     link: ''
+//   },
+//   {
+//     title: 'Sair',
+//     caption: '',
+//     icon: 'exit_to_app',
+//     link: ''
+//   }
+// ]
 
 const leftDrawerOpen = ref(false)
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+// function toggleLeftDrawer () {
+//   leftDrawerOpen.value = !leftDrawerOpen.value
+// }
 </script>
