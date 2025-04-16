@@ -1,6 +1,8 @@
 import { defineRouter } from '#q-app/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
+// import { createApp } from 'vue'
+// import { useReCaptcha } from 'vue-recaptcha-v3' 
 
 /*
  * If not building with SSR mode, you can
@@ -10,7 +12,15 @@ import routes from './routes'
  * async/await or return a Promise which resolves
  * with the Router instance.
  */
+// const app = creatApp(app)
 
+// app.use(useReCaptcha, {
+//   siteKey: '6Lde0O0lAAAAAOr0hY6o9Jd7qkXg5v2bR5H8m4w',
+//   loaderOptions: {
+//     autoHideBadge: true,
+//     badge: 'bottomright'
+//   }
+// })
 export default defineRouter(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory

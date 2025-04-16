@@ -15,7 +15,8 @@
           src="~assets/CpLogo.png"
           width="80px"
           height="80px"
-          class="q-mr-sm"> 
+          class="q-mr-sm"
+          fit="contain"> 
 
         </q-img>
 
