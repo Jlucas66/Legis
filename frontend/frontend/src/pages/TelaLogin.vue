@@ -44,8 +44,11 @@
           /> -->
           <div class="row items-center q-mt-md">
             <q-btn type="submit" label="Entrar" color="black" width="100px" height="120px" />
+          </div> <br/>
+          <div>
+            <q-btn label="Não sou Administrador" color="black" width="100px" height="120px" :to="{ name: 'TelaAposLoginUser' }" />
           </div>
-        </q-form>
+        </q-form> 
       </q-card-section>
     </q-card>
   </q-page>
