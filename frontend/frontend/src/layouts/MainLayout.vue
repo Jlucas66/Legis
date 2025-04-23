@@ -12,7 +12,7 @@
         /> -->
 
         <q-img 
-          src="~assets/CpLogo.png"
+          src="~assets/logoCpT.png"
           width="80px"
           height="80px"
           class="q-mr-sm"

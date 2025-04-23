@@ -3,8 +3,8 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'home', component: () => import('pages/TelaLogin.vue') },
-      { path: '/TelaAposLoginUser', name: 'TelaAposLoginUser', component: () => import('pages/TelaAposLoginUser.vue') }
+      { path: '', name: 'home', component: () => import('pages/TelaAposLoginUser.vue') },
+      { path: '/TelaLogin', name: 'TelaLogin', component: () => import('pages/TelaLogin.vue') }
     ]
   },
 

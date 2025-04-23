@@ -14,7 +14,10 @@
         :rows="normasFiltradas"
         :columns="columns"
         row-key="id"
-    />
+    /> <br/>
+    <div class="row items-center q-mt-md">
+            <q-btn type="submit" label="Normas Internas" color="black" class="full-width" :to="{ name: 'TelaLogin' }" />
+          </div> <br/>
 
 </template>
 
