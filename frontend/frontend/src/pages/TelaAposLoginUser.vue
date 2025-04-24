@@ -14,10 +14,24 @@
         :rows="normasFiltradas"
         :columns="columns"
         row-key="id"
-    /> <br/>
+    >
+        <template v-slot:body-cell-acoes="{ rowIndex }">
+            <div class="row items-center q-gutter-sm">
+                <q-btn 
+                    icon="picture_as_pdf"
+                    color="red" 
+                    round
+                    size="sm" 
+                   @click="getPosts(rowIndex)"
+            />
+            </div>
+            
+        </template>
+    </q-table>
+    <br/>
     <div class="row items-center q-mt-md">
-            <q-btn type="submit" label="Normas Internas" color="black" class="full-width" :to="{ name: 'TelaLogin' }" />
-          </div> <br/>
+        <q-btn type="submit" label="Normas Internas" color="black" class="full-width" :to="{ name: 'TelaLogin' }" />
+    </div>
 
 </template>
 
@@ -38,7 +52,7 @@ export default defineComponent({
             { name: 'numero', label: 'Número', align: 'left', field: 'numero', sortable: true },
             { name: 'data', label: 'Data', align: 'left', field: 'data', sortable: true },
             { name: 'ementa', label: 'Ementa', align: 'left', field: 'ementa', sortable: true },
-            { name: 'acoes', label: 'Ações', align: 'left', field: 'acoes', sortable: true },
+            { name: 'acoes', label: 'Ações', align: 'center', field: 'acoes', sortable: true },
         ])
 
         onMounted( async () => {

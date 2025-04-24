@@ -4,7 +4,8 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', name: 'home', component: () => import('pages/TelaAposLoginUser.vue') },
-      { path: '/TelaLogin', name: 'TelaLogin', component: () => import('pages/TelaLogin.vue') }
+      { path: '/TelaLogin', name: 'TelaLogin', component: () => import('pages/TelaLogin.vue') },
+      { path: '/TelaAdmin', name : 'TelaAdmin', component: () => import('pages/TelaAposLoginAdmin.vue') },
     ]
   },
 

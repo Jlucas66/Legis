@@ -80,10 +80,10 @@ const onSubmit = async () => {
     const fullURL = `${url}/api/login`
     const resposta = await axios.post(fullURL, body)
     console.log('Resposta do login:', resposta)
-    if (resposta.status !== 200) {
-      router.push({ name: 'TelaAposLoginUser' })
+    if (resposta.status === 200) {
+      router.push({ name: 'TelaAdmin' })
     } else {
-      alert('Login realizado com sucesso com o email: ' + fullEmail)
+      alert('Login não realizado, verifique suas credenciais: ' + fullEmail)
     }
 
   } catch (error) {
