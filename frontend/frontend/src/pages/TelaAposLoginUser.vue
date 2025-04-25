@@ -15,14 +15,14 @@
         :columns="columns"
         row-key="id"
     >
-        <template v-slot:body-cell-acoes="{ rowIndex }">
-            <div class="row items-center q-gutter-sm">
+        <template v-slot:body-cell-acoes="{ row }">
+            <div lass="row items-center q-gutter-sm" style="flex-wrap: nowrap;">
                 <q-btn 
                     icon="picture_as_pdf"
                     color="red" 
                     round
                     size="sm" 
-                   @click="getPosts(rowIndex)"
+                   @click="verPDF(row)"
             />
             </div>
             
@@ -39,6 +39,7 @@
 import { defineComponent, ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 const url = import.meta.env.VITE_API_URL
+const urlPDF = import.meta.env.VITE_API_URL_PDF
 
 export default defineComponent({
     name: 'TelaAposLoginUser',
@@ -51,8 +52,8 @@ export default defineComponent({
             { name: 'tipo', label: 'Tipo de Documento', align: 'left', field: 'tipo', sortable: true },
             { name: 'numero', label: 'Número', align: 'left', field: 'numero', sortable: true },
             { name: 'data', label: 'Data', align: 'left', field: 'data', sortable: true },
-            { name: 'ementa', label: 'Ementa', align: 'left', field: 'ementa', sortable: true },
-            { name: 'acoes', label: 'Ações', align: 'center', field: 'acoes', sortable: true },
+            { name: 'ementa', label: 'Ementa', align: 'left', field: 'ementa', sortable: true, style: 'max-width: 750px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' },
+            { name: 'acoes', label: 'Ações', align: 'center', field: 'acoes', sortable: true, style: 'max-width: 150px' },
         ])
 
         onMounted( async () => {
@@ -87,10 +88,21 @@ export default defineComponent({
             })
         })
 
+        const verPDF = async (norma) => {
+            try {
+                const pdfURL = `${urlPDF}${norma.link}`;
+                window.open(pdfURL, '_blank')
+                
+            } catch (error) {
+                console.error('Erro ao buscar PDF:', error)
+            }
+        }
+
         return {
             normas,
             columns,
             normasFiltradas,
+            verPDF,
             getPosts
          }
         }
