@@ -98,13 +98,12 @@ export default defineComponent({
             { name: 'numero', label: 'Número', align: 'left', field: 'numero', sortable: true },
             { name: 'data', label: 'Data', align: 'left', field: 'data', sortable: true },
             { name: 'ementa', label: 'Ementa', align: 'left', field: 'ementa', sortable: true, style: 'max-width: 750px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' },
-            { name: 'status', label: 'Status', align: 'left', field: 'status', sortable: true },
+            { name: 'statusDisponivel', label: 'Status', align: 'left', field: 'statusDisponivel', sortable: true },
             { name: 'acoes', label: 'Ações', align: 'center', field: 'acoes', sortable: true, style: 'min-width: 120px' },
         ]
 
         onMounted( async () => {
             try {
-                console.log('URL', `${url}/api/normas/admin`)
                 const resposta = await axios.get(`${url}/api/normas/admin`)
                 normasAdmin.value = resposta.data
             } catch (error) {
@@ -119,7 +118,7 @@ export default defineComponent({
                     normasAdmin.tipo.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
                     normasAdmin.numero.toString().includes(pesquisa.value) ||
                     normasAdmin.data.toString().includes(pesquisa.value) ||
-                    normasAdmin.status.toString().includes(pesquisa.value) ||
+                    normasAdmin.statusDisponivel.toString().includes(pesquisa.value) ||
                     normasAdmin.ementa.toLowerCase().includes(pesquisa.value.toLowerCase())
                 )
             })
@@ -127,8 +126,9 @@ export default defineComponent({
 
         const verPDF = async (norma) => {
             try {
-                const pdfURL = `${urlPDF}${norma.link}`;
-                window.open(pdfURL, '_blank')
+              const pdfURL = `${urlPDF}${norma.link}`;
+
+              window.open(pdfURL, '_blank')
                 
             } catch (error) {
                 console.error('Erro ao buscar PDF:', error)
@@ -143,17 +143,18 @@ export default defineComponent({
                 cancel: true,
                 persistent: true
              }).onOk(async () => {
-                console.log(`${url}/excluir/${id}`)
-                const response = await fetch(`${url}/excluir/${id}`, {
+                const response = await fetch(`${url}/api/normas/excluir/${id}`, {
                   method: 'DELETE',
                   headers: {
                    'Content-Type': 'application/json'
                     },
+                  
                 });
                 if (response.ok) {
                  $q.notify({ message: 'Apagado com sucesso', icon: 'check', color:'green' });
+                 onMounted()
                  } else {
-                   $q.notify({ message: 'Erro ao apagar.', icon: 'times', color: 'red' });
+                  $q.notify({ message: 'Erro ao apagar.', icon: 'times', color: 'red' });
                  }
             });
          } catch (error) {
