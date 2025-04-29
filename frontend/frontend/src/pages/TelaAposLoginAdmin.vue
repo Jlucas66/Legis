@@ -53,14 +53,14 @@
                     color="yellow" 
                     round
                     size="sm" 
-                    @click="getPosts(row)"
+                    @click="abrirEdicao(row)"
                 />
                  <q-btn 
                     icon="toggle_on"
                     color="black" 
                    round
                    size="sm" 
-                   @click="getPosts(row)"
+                   @click="setStatusNorma(row.id)"
                 />
                 <q-btn 
                    icon="delete"
@@ -75,6 +75,28 @@
     <div class="row items-right q-mt-md">
         <q-btn icon="logout" label="Sair" color="black" class="full-width"  :to="{ name: 'home' }" />
     </div>
+
+ <q-card v-if="abrirEdicao" class="q-pa-md q-mt-md" style="max-width: 600px; margin: auto;">
+  <q-card-section>
+    <div class="text-h6">Editar Norma</div>
+  </q-card-section>
+
+  <q-card-section class="q-gutter-md">
+    <q-input v-model="normasAdmin.orgao" label="Órgão" filled />
+    <q-input v-model="normasAdmin.tipo" label="Tipo" filled />
+    <q-input v-model="normasAdmin.numero" label="Número" filled />
+    <q-input v-model="normasAdmin.data" label="Data" type="date" filled />
+    <q-input v-model="normasAdmin.ementa" label="Ementa" type="textarea" filled />
+    <q-toggle v-model="normasAdmin.ativo" label="Ativo" />
+    <q-toggle v-model="normasAdmin.statusDisponivel" label="Status Disponível" />
+  </q-card-section>
+
+  <q-card-actions>
+    <q-btn flat label="Cancelar" color="grey" @click="mostrarCardEdicao = false" />
+    <q-btn label="Salvar" color="primary" @click="salvarEdicao" />
+  </q-card-actions>
+</q-card>
+
     
 </template>
 
@@ -91,6 +113,8 @@ export default defineComponent({
         const pesquisa = ref('')
         const normasAdmin = ref([])
         const $q = useQuasar()
+        const normaParaEditar = ref(null);
+        const abrirCardEdicao = ref(false);
         
         const columns = [
             { name: 'orgao', label: 'Órgão', align: 'left', field: 'orgao', sortable: true },
@@ -103,16 +127,13 @@ export default defineComponent({
         ]
 
         onMounted( async () => {
-            try {
-                const resposta = await axios.get(`${url}/api/normas/admin`)
-                normasAdmin.value = resposta.data
-            } catch (error) {
-                console.error('Erro ao buscar posts:', error)
-            }
+          console.log("Componente montado, carregando normas...");
+          await fetchNormas();
         })
 
         const normasFiltradas = computed(() => {
             return normasAdmin.value.filter((normasAdmin) => {
+              if (!normasAdmin || !normasAdmin.orgao) return false;
                 return (
                     normasAdmin.orgao.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
                     normasAdmin.tipo.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
@@ -135,6 +156,23 @@ export default defineComponent({
             }
         }
 
+        const fetchNormas = async () => {
+          try {
+                const resposta = await axios.get(`${url}/api/normas/admin`)
+                console.log('Normas carregadas:', normasAdmin.value);
+                normasAdmin.value = resposta.data || [];
+            } catch (error) {
+                console.error('Erro ao buscar posts:', error)
+                normasAdmin.value = [];
+            }
+        }
+
+        const abrirEdicao = (normasAdmin) => {
+
+          console.log("Norma recebida para edição:", normasAdmin);
+          abrirCardEdicao.value = true;
+        }
+
         const deleteNorma = async (id) => {
             try{
               $q.dialog({
@@ -148,26 +186,84 @@ export default defineComponent({
                   headers: {
                    'Content-Type': 'application/json'
                     },
+                    
+
                   
                 });
                 if (response.ok) {
                  $q.notify({ message: 'Apagado com sucesso', icon: 'check', color:'green' });
-                 onMounted()
+                 await fetchNormas()
                  } else {
                   $q.notify({ message: 'Erro ao apagar.', icon: 'times', color: 'red' });
                  }
-            });
-         } catch (error) {
-            console.error(error);
-            $q.notify({ message: 'Erro ao apagar.', icon: 'times', color: 'red' });
+              });
+            } catch (error) {
+              console.error(error);
+              $q.notify({ message: 'Erro ao apagar.', icon: 'times', color: 'red' });
+           }
+        }       
+
+      const setStatusNorma = async (id) => {
+        try{
+              $q.dialog({
+                title: 'Atenção',
+                message: 'Você tem certeza que deseja mudar o status da norma?',
+                cancel: true,
+                persistent: true
+             }).onOk(async () => {
+                const response = await fetch(`${url}/api/normas/modificar-status/${id}`, {
+                  method: 'DELETE',
+                  headers: {
+                   'Content-Type': 'application/json'
+                    },      
+                });
+                const result = await response.json();
+                if (response.ok) {
+                 $q.notify({ message: result.message , icon: 'check', color:'green' });
+                 await fetchNormas()
+                 } else {
+                  $q.notify({ message: result.message || "Erro ao modificar o status da norma.", icon: 'times', color: 'red' });
+                 }
+              });
+            } catch (error) {
+              console.error(error);
+              $q.notify({ message: 'Erro ao apagar.', icon: 'times', color: 'red' });
+           }
+      }
+
+      const editarNorma = (async (id) =>{
+        try {
+          const response = await fetch(`${url}/api/normas/modificar/${id}`, {
+          method: 'PUT',
+          headers: {
+          'Content-Type': 'application/json'
+        },
+          body: JSON.stringify(normaParaEditar.value)
+        });
+
+        if (response.ok) {
+          $q.notify({ message: 'Norma atualizada com sucesso.', color: 'green', icon: 'check' });
+          abrirCardEdicao.value = false;
+          await fetchNormas(); // Atualiza a tabela após edição
+        } else {
+         $q.notify({ message: 'Erro ao atualizar norma.', color: 'red', icon: 'error' });
         }
-    }       
+      } catch (error) {
+        console.error(error);
+        $q.notify({ message: 'Erro ao atualizar norma.', color: 'red', icon: 'error' });
+      }
+    })
 
         return {
             pesquisa,
             normasAdmin,
+            // normaParaEditar,
             columns,
             normasFiltradas,
+            editarNorma,
+            abrirEdicao,
+            fetchNormas,
+            setStatusNorma,
             verPDF,
             deleteNorma
         }
