@@ -53,7 +53,7 @@
                     color="yellow" 
                     round
                     size="sm" 
-                    @click="abrirEdicao(row)"
+                    @click="abrirEdicao(row.id)"
                 />
                  <q-btn 
                     icon="toggle_on"
@@ -76,26 +76,28 @@
         <q-btn icon="logout" label="Sair" color="black" class="full-width"  :to="{ name: 'home' }" />
     </div>
 
- <q-card v-if="abrirEdicao" class="q-pa-md q-mt-md" style="max-width: 600px; margin: auto;">
+ <q-dialog v-model="abrirCardEdicao" >
+  <q-card class="q-pa-md q-mt-md" style="max-width: 800px; margin: auto;">
   <q-card-section>
     <div class="text-h6">Editar Norma</div>
   </q-card-section>
 
   <q-card-section class="q-gutter-md">
-    <q-input v-model="normasAdmin.orgao" label="Órgão" filled />
-    <q-input v-model="normasAdmin.tipo" label="Tipo" filled />
-    <q-input v-model="normasAdmin.numero" label="Número" filled />
-    <q-input v-model="normasAdmin.data" label="Data" type="date" filled />
-    <q-input v-model="normasAdmin.ementa" label="Ementa" type="textarea" filled />
-    <q-toggle v-model="normasAdmin.ativo" label="Ativo" />
-    <q-toggle v-model="normasAdmin.statusDisponivel" label="Status Disponível" />
+    <q-input v-model="normaParaEditar.orgao" label="Órgão" filled />
+    <q-input v-model="normaParaEditar.tipo" label="Tipo" filled />
+    <q-input v-model="normaParaEditar.numero" label="Número" filled />
+    <q-input v-model="normaParaEditar.data" label="Data" type="date" filled />
+    <q-input v-model="normaParaEditar.ementa" label="Ementa" type="textarea" filled />
+    <q-toggle v-model="normaParaEditar.ativo" label="Ativo" />
+    <q-toggle v-model="normaParaEditar.statusDisponivel" label="Status Disponível" />
   </q-card-section>
 
   <q-card-actions>
-    <q-btn flat label="Cancelar" color="grey" @click="mostrarCardEdicao = false" />
-    <q-btn label="Salvar" color="primary" @click="salvarEdicao" />
+    <q-btn flat label="Cancelar" color="grey" @click="abrirCardEdicao = false" />
+    <q-btn label="Salvar" color="black" @click="salvarEdicao" />
   </q-card-actions>
 </q-card>
+ </q-dialog>
 
     
 </template>
@@ -113,8 +115,8 @@ export default defineComponent({
         const pesquisa = ref('')
         const normasAdmin = ref([])
         const $q = useQuasar()
-        const normaParaEditar = ref(null);
         const abrirCardEdicao = ref(false);
+        // const normaParaEditar = ref()
         
         const columns = [
             { name: 'orgao', label: 'Órgão', align: 'left', field: 'orgao', sortable: true },
@@ -126,8 +128,19 @@ export default defineComponent({
             { name: 'acoes', label: 'Ações', align: 'center', field: 'acoes', sortable: true, style: 'min-width: 120px' },
         ]
 
+        const normaParaEditar = ref({
+          id: null,
+          orgao: '',
+          tipo: '',
+          numero: '',
+          data: '',
+          ementa: '',
+          ativo: false,
+          statusDisponivel: false
+        });
+        
+
         onMounted( async () => {
-          console.log("Componente montado, carregando normas...");
           await fetchNormas();
         })
 
@@ -144,6 +157,7 @@ export default defineComponent({
                 )
             })
         })
+        
 
         const verPDF = async (norma) => {
             try {
@@ -159,7 +173,6 @@ export default defineComponent({
         const fetchNormas = async () => {
           try {
                 const resposta = await axios.get(`${url}/api/normas/admin`)
-                console.log('Normas carregadas:', normasAdmin.value);
                 normasAdmin.value = resposta.data || [];
             } catch (error) {
                 console.error('Erro ao buscar posts:', error)
@@ -167,10 +180,17 @@ export default defineComponent({
             }
         }
 
-        const abrirEdicao = (normasAdmin) => {
-
-          console.log("Norma recebida para edição:", normasAdmin);
-          abrirCardEdicao.value = true;
+        const abrirEdicao = async (id) => {
+          try {
+            const response = await axios.get(`${url}/api/normas/listar-para-edicao/${id}`)
+            if (response.data) {
+              normaParaEditar.value = {...response.data };
+              abrirCardEdicao.value = true;
+            }  
+          } catch (error) {
+            console.error('Erro ao buscar norma para edição:', error)
+            $q.notify({ message: 'Erro ao buscar norma para edição.', icon: 'times', color: 'red' });
+          }
         }
 
         const deleteNorma = async (id) => {
@@ -185,10 +205,7 @@ export default defineComponent({
                   method: 'DELETE',
                   headers: {
                    'Content-Type': 'application/json'
-                    },
-                    
-
-                  
+                    }, 
                 });
                 if (response.ok) {
                  $q.notify({ message: 'Apagado com sucesso', icon: 'check', color:'green' });
@@ -240,6 +257,7 @@ export default defineComponent({
         },
           body: JSON.stringify(normaParaEditar.value)
         });
+        console.log(response);
 
         if (response.ok) {
           $q.notify({ message: 'Norma atualizada com sucesso.', color: 'green', icon: 'check' });
@@ -254,16 +272,34 @@ export default defineComponent({
       }
     })
 
+    const salvarEdicao = async () => {
+      try {
+        const response = await axios.put(`${url}/api/normas/modificar/${normaParaEditar.value.id}`, normaParaEditar.value);
+        if (response.status === 200) {
+          $q.notify({ message: 'Norma atualizada com sucesso.', color: 'green', icon: 'check' });
+          abrirCardEdicao.value = false;
+          await fetchNormas();
+        } else {
+          throw new Error('Erro na resposta');
+        }
+      } catch (error) {
+          console.error(error);
+          $q.notify({ message: 'Erro ao atualizar norma.', color: 'red', icon: 'error' });
+      }
+};
+
         return {
             pesquisa,
             normasAdmin,
-            // normaParaEditar,
+            normaParaEditar,
             columns,
             normasFiltradas,
+            abrirCardEdicao,
             editarNorma,
             abrirEdicao,
             fetchNormas,
             setStatusNorma,
+            salvarEdicao,
             verPDF,
             deleteNorma
         }
