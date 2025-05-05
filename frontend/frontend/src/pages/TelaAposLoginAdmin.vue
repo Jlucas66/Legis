@@ -2,25 +2,21 @@
       <div class="q-pa-md">
     <q-btn-dropdown color="black" class="full-width" label="Menu de funcionalidades">
       <q-list>
-        <q-item clickable v-close-popup @click="onItemClick">
-          <q-item-section>
-            <q-item-label>Normas</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item clickable v-close-popup @click="onItemClick">
+        <q-item clickable v-close-popup :to="{ name: 'TelaOrgaos' }">
           <q-item-section>
             <q-item-label>Orgãos</q-item-label>
           </q-item-section>
         </q-item>
 
-        <q-item clickable v-close-popup @click="onItemClick">
+        <q-item clickable v-close-popup :to="{ name: 'TelaTipoDocumento' }">
           <q-item-section>
             <q-item-label>Tipo de Documento</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
     </q-btn-dropdown>
+
+    <q-btn icon="add" label="Adicionar Norma" color="black" class="full-width q-mt-md" @click="abrirCardNovaNorma = true" />
   </div>
     <q-input
         filled
@@ -77,10 +73,10 @@
     </div>
 
  <q-dialog v-model="abrirCardEdicao" >
-  <q-card class="q-pa-md q-mt-md" style="max-width: 800px; margin: auto;">
-  <q-card-section>
-    <div class="text-h6">Editar Norma</div>
-  </q-card-section>
+  <q-card class="q-pa-md q-mt-md" style="max-width: 900px; width: 100%;">
+    <q-card-section>
+      <div class="text-h6">Editar Norma</div>
+    </q-card-section>
 
   <q-card-section class="q-gutter-md">
     <q-input v-model="normaParaEditar.orgao" label="Órgão" filled />
@@ -97,6 +93,29 @@
     <q-btn label="Salvar" color="black" @click="salvarEdicao" />
   </q-card-actions>
 </q-card>
+ </q-dialog>
+
+ <q-dialog v-model="abrirCardNovaNorma">
+  <q-card class="q-pa-md q-mt-md" style="max-width: 900px; width: 100%;">
+    <q-card-section>
+      <div class="text-h6">Adicionar Norma</div>
+    </q-card-section>
+
+    <q-card-section class="q-gutter-md">
+      <q-input v-model="novaNorma.orgao" label="Órgão" filled />
+      <q-input v-model="novaNorma.tipo" label="Tipo" filled />
+      <q-input v-model="novaNorma.numero" label="Número" filled />
+      <q-input v-model="novaNorma.data" label="Data" type="date" filled />
+      <q-input v-model="novaNorma.ementa" label="Ementa" type="textarea" filled />
+      <q-toggle v-model="novaNorma.ativo" label="Ativo" />
+      <q-toggle v-model="novaNorma.statusDisponivel" label="Status Disponível" />
+    </q-card-section>
+
+    <q-card-actions>
+      <q-btn flat label="Cancelar" color="grey" @click="abrirCardNovaNorma = false" />
+      <q-btn label="Salvar" color="black" @click="salvarNovaNorma" />
+    </q-card-actions>
+  </q-card>
  </q-dialog>
 
     
@@ -116,7 +135,7 @@ export default defineComponent({
         const normasAdmin = ref([])
         const $q = useQuasar()
         const abrirCardEdicao = ref(false);
-        // const normaParaEditar = ref()
+        const abrirCardNovaNorma = ref(false);
         
         const columns = [
             { name: 'orgao', label: 'Órgão', align: 'left', field: 'orgao', sortable: true },
@@ -130,6 +149,16 @@ export default defineComponent({
 
         const normaParaEditar = ref({
           id: null,
+          orgao: '',
+          tipo: '',
+          numero: '',
+          data: '',
+          ementa: '',
+          ativo: false,
+          statusDisponivel: false
+        });
+
+        const novaNorma = ref({
           orgao: '',
           tipo: '',
           numero: '',
@@ -186,12 +215,38 @@ export default defineComponent({
             if (response.data) {
               normaParaEditar.value = {...response.data };
               abrirCardEdicao.value = true;
-            }  
+            }
           } catch (error) {
             console.error('Erro ao buscar norma para edição:', error)
             $q.notify({ message: 'Erro ao buscar norma para edição.', icon: 'times', color: 'red' });
           }
         }
+
+        const salvarNovaNorma = async () => {
+            try {
+              const response = await fetch(`${url}/api/normas/adicionar`, {
+              orgao: novaNorma.value.orgao,
+              tipo: novaNorma.value.tipo,
+              numero: novaNorma.value.numero,
+              data: novaNorma.value.data,
+              ementa: novaNorma.value.ementa,
+              ativo: novaNorma.value.ativo,
+              statusDisponivel: novaNorma.value.statusDisponivel,
+              method: 'POST',
+              headers: {
+               'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(novaNorma.value)
+              });
+              console.log(response)
+              abrirCardNovaNorma.value = false;
+
+              $q.notify({ message: 'Norma adicionada com sucesso.', color: 'green', icon: 'check' });
+            } catch (error) {
+                console.error('Erro ao adicionar norma:', error);
+                $q.notify({ message: 'Erro ao adicionar norma.', color: 'red', icon: 'error' });
+              }
+            };
 
         const deleteNorma = async (id) => {
             try{
@@ -257,12 +312,11 @@ export default defineComponent({
         },
           body: JSON.stringify(normaParaEditar.value)
         });
-        console.log(response);
 
         if (response.ok) {
           $q.notify({ message: 'Norma atualizada com sucesso.', color: 'green', icon: 'check' });
           abrirCardEdicao.value = false;
-          await fetchNormas(); // Atualiza a tabela após edição
+          await fetchNormas(); 
         } else {
          $q.notify({ message: 'Erro ao atualizar norma.', color: 'red', icon: 'error' });
         }
@@ -296,10 +350,13 @@ export default defineComponent({
             normasFiltradas,
             abrirCardEdicao,
             editarNorma,
+            novaNorma,
             abrirEdicao,
             fetchNormas,
             setStatusNorma,
             salvarEdicao,
+            salvarNovaNorma,
+            abrirCardNovaNorma,
             verPDF,
             deleteNorma
         }
