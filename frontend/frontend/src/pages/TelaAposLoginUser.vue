@@ -68,7 +68,6 @@ export default defineComponent({
 
         const getPosts = async () => {
             try {
-                console.log('URL', `${url}/api/normas`)
                 const resposta = await axios.get(`${url}/api/normas`)
                 normas.value = resposta.data
             } catch (error) {

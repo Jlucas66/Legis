@@ -240,6 +240,7 @@ export default defineComponent({
               });
               console.log(response)
               abrirCardNovaNorma.value = false;
+              await fetchNormas();
 
               $q.notify({ message: 'Norma adicionada com sucesso.', color: 'green', icon: 'check' });
             } catch (error) {
