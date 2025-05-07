@@ -1,23 +1,7 @@
 <template>
-      <div class="q-pa-md">
-    <q-btn-dropdown color="black" class="full-width" label="Menu de funcionalidades">
-      <q-list>
-        <q-item clickable v-close-popup :to="{ name: 'TelaOrgaos' }">
-          <q-item-section>
-            <q-item-label>Orgãos</q-item-label>
-          </q-item-section>
-        </q-item>
-
-        <q-item clickable v-close-popup :to="{ name: 'TelaTipoDocumento' }">
-          <q-item-section>
-            <q-item-label>Tipo de Documento</q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-btn-dropdown>
-
-    <q-btn icon="add" label="Adicionar Norma" color="black" class="full-width q-mt-md" @click="abrirCardNovaNorma = true" />
-  </div>
+    <div class="q-pa-md">
+       <q-btn icon="add" label="Adicionar Norma" color="black" class="full-width q-mt-md" @click="abrirCardNovaNorma = true" />
+    </div>
     <q-input
         filled
         v-model="pesquisa"
@@ -304,30 +288,7 @@ export default defineComponent({
            }
       }
 
-      const editarNorma = (async (id) =>{
-        try {
-          const response = await fetch(`${url}/api/normas/modificar/${id}`, {
-          method: 'PUT',
-          headers: {
-          'Content-Type': 'application/json'
-        },
-          body: JSON.stringify(normaParaEditar.value)
-        });
-
-        if (response.ok) {
-          $q.notify({ message: 'Norma atualizada com sucesso.', color: 'green', icon: 'check' });
-          abrirCardEdicao.value = false;
-          await fetchNormas(); 
-        } else {
-         $q.notify({ message: 'Erro ao atualizar norma.', color: 'red', icon: 'error' });
-        }
-      } catch (error) {
-        console.error(error);
-        $q.notify({ message: 'Erro ao atualizar norma.', color: 'red', icon: 'error' });
-      }
-    })
-
-    const salvarEdicao = async () => {
+    const salvarEdicaoNorma = async () => {
       try {
         const response = await axios.put(`${url}/api/normas/modificar/${normaParaEditar.value.id}`, normaParaEditar.value);
         if (response.status === 200) {
@@ -350,12 +311,11 @@ export default defineComponent({
             columns,
             normasFiltradas,
             abrirCardEdicao,
-            editarNorma,
             novaNorma,
             abrirEdicao,
             fetchNormas,
             setStatusNorma,
-            salvarEdicao,
+            salvarEdicaoNorma,
             salvarNovaNorma,
             abrirCardNovaNorma,
             verPDF,

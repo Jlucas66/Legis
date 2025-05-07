@@ -27,8 +27,8 @@
             />
 
             <q-btn 
-                icon="delete"
-                color="red" 
+                icon="toggle_on"
+                color="black" 
                 round
                 size="sm" 
                 @click="excluirOrgao(row.id)"
@@ -46,12 +46,11 @@
 
         <q-card-section class="q-gutter-md">
             <q-input v-model="orgaosParaEditar.nome" label="Nome" filled/>
-            <q-select v-model="orgaosParaEditar.situacao" label="Status" :options="['Ativo', 'Inativo']" />
         </q-card-section>
 
         <q-card-actions>
-            <q-btn label="Salvar" color="primary" @click="salvarEdicaoOrgao" />
-            <q-btn label="Cancelar" color="secondary" @click="abrirCardEdicaoOrgaos = false" />
+            <q-btn flat label="Cancelar" color="grey" @click="abrirCardEdicaoOrgaos = false" />
+            <q-btn label="Salvar" color="black" @click="salvarEdicaoOrgao" />
         </q-card-actions>
     </q-card>    
 </q-dialog>    
@@ -89,7 +88,7 @@ export default defineComponent({
 
         const columns = ([
             { name: 'nome', label: 'Nome', align: 'left', field: 'nome', sortable: true },
-            { name: 'status', label: 'Status', align: 'left', field: 'status', sortable: true },
+            { name: 'ativo', label: 'Status', align: 'left', field: 'ativo', sortable: true },
             { name: 'acoes', label: 'Ações', align: 'center', field: 'acoes', sortable: true, style: 'max-width: 150px' },
         ])
 
@@ -133,17 +132,18 @@ export default defineComponent({
                     cancel: true,
                     persistent: true
                 }).onOk(async () => {
-                    const response = await fetch(`${url}/api/categorias/orgaos/${id}`, {
+                    const response = await fetch(`${url}/api/categorias/excluir/${id}`, {
                         method: 'DELETE',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                     });
+                    const result = await response.json();
                     if (response.ok) {
-                        $q.notify({ message: 'Órgão excluído com sucesso', color: 'positive' })
+                        $q.notify({ message: result.message, color: 'positive' })
                         await fetchOrgaos()
                     } else {
-                        $q.notify({ message: 'Erro ao excluir órgão', color: 'negative' })
+                        $q.notify({ message: result.message ,color: 'negative' })
                     }
                 })
             } catch (error) {
@@ -154,9 +154,9 @@ export default defineComponent({
 
         const abrirEdicaoCategorias = async (id) => {
             try {
-                const response = await fetch(`${url}/api/categorias/listar-para-edicao//${id}`)
+                const response = await axios.get(`${url}/api/categorias/listar-para-edicao/${id}`)
                 if (response.data) {
-                    orgaosParaEditar.value = response.data
+                    orgaosParaEditar.value = {...response.data };
                     abrirCardEdicaoOrgaos.value = true;
                 }
             } catch (error) {
@@ -168,7 +168,7 @@ export default defineComponent({
 
         const salvarEdicaoOrgao = async () => {
             try {
-                const response = await axios.put(`${url}/api/categorias/orgaos/${orgaosParaEditar.value.id}`, orgaosParaEditar.value);
+                const response = await axios.put(`${url}/api/categorias/modificar/${orgaosParaEditar.value.id}`, orgaosParaEditar.value);
                 if (response.status === 200) {
                     $q.notify({ message: 'Órgão editado com sucesso', color: 'positive' })
                     abrirCardEdicaoOrgaos.value = false;
