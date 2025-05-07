@@ -1,37 +1,58 @@
 <template>
-    <q-input
-        filled
-        v-model="pesquisa"
-        label="Pesquisar"
-        clearable
-        >
-            <template v-slot:append>
-                <q-icon name="search" />
-            </template>
-    </q-input>
-    <q-table
-        title="Normas"
-        :rows="normasFiltradas"
-        :columns="columns"
-        row-key="id"
-    >
-        <template v-slot:body-cell-acoes="{ row }">
-            <div lass="row items-center q-gutter-sm" style="flex-wrap: nowrap;">
-                <q-btn 
-                    icon="picture_as_pdf"
-                    color="red" 
-                    round
-                    size="sm" 
-                   @click="verPDF(row)"
-            />
-            </div>
-            
-        </template>
-    </q-table>
-    <br/>
-    <div class="row items-center q-mt-md">
-        <q-btn type="submit" label="Normas Internas" color="black" class="full-width" :to="{ name: 'TelaLogin' }" />
-    </div>
+<q-card class="q-pa-md">
+
+<q-card-section>
+  <q-input
+    filled
+    v-model="pesquisa"
+    label="Pesquisar"
+    clearable
+  >
+    <template v-slot:append>
+      <q-icon name="search" />
+    </template>
+  </q-input>
+</q-card-section>
+
+<q-separator />
+
+<q-card-section>
+  <q-table
+    title="Normas"
+    :rows="normasFiltradas"
+    :columns="columns"
+    row-key="id"
+  >
+    <template v-slot:body-cell-acoes="{ row }">
+      <div class="row items-center q-gutter-sm" style="flex-wrap: nowrap;">
+        <q-btn 
+          icon="picture_as_pdf"
+          color="red" 
+          round
+          size="sm" 
+          @click="verPDF(row)"
+        />
+      </div>
+    </template>
+  </q-table>
+</q-card-section>
+
+<q-separator />
+
+<q-card-section>
+  <div class="row items-center q-mt-md">
+    <q-btn
+      type="submit"
+      label="Normas Internas"
+      color="black"
+      class="full-width"
+      :to="{ name: 'TelaLogin' }"
+    />
+  </div>
+</q-card-section>
+
+</q-card>
+
 
 </template>
 

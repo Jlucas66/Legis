@@ -1,60 +1,77 @@
 <template>
-    <div class="q-pa-md">
-       <q-btn icon="add" label="Adicionar Norma" color="black" class="full-width q-mt-md" @click="abrirCardNovaNorma = true" />
-    </div>
-    <q-input
-        filled
-        v-model="pesquisa"
-        label="Pesquisar"
-        clearable
-        >
-            <template v-slot:append>
-                <q-icon name="search" />
-            </template>
-    </q-input>
-    <q-table
-        title="Normas"
-        :rows="normasFiltradas"
-        :columns="columns"
-        row-key="id"
-        >
+<q-card class="q-pa-md">
 
-        <template v-slot:body-cell-acoes="{ row }">
-            <div class="row items-center q-gutter-sm" style="flex-wrap: nowrap;">
-                <q-btn 
-                    icon="picture_as_pdf"
-                    color="red" 
-                    round
-                    size="sm" 
-                    @click="verPDF(row)"
-                />
-                <q-btn 
-                    icon="edit"
-                    color="yellow" 
-                    round
-                    size="sm" 
-                    @click="abrirEdicao(row.id)"
-                />
-                 <q-btn 
-                    icon="toggle_on"
-                    color="black" 
-                   round
-                   size="sm" 
-                   @click="setStatusNorma(row.id)"
-                />
-                <q-btn 
-                   icon="delete"
-                   color="purple" 
-                   round
-                   size="sm" 
-                   @click="deleteNorma(row.id)"
-                />       
-    </div>
-</template>  
-    </q-table> <br/>
-    <div class="row items-right q-mt-md">
-        <q-btn icon="logout" label="Sair" color="black" class="full-width"  :to="{ name: 'home' }" />
-    </div>
+<q-card-section>
+  <q-btn
+    icon="add"
+    label="Adicionar Norma"
+    color="black"
+    class="full-width q-mt-md"
+    @click="abrirCardNovaNorma = true"
+  />
+</q-card-section>
+
+<q-separator />
+
+<q-card-section>
+  <q-input
+    filled
+    v-model="pesquisa"
+    label="Pesquisar"
+    clearable
+  >
+    <template v-slot:append>
+      <q-icon name="search" />
+    </template>
+  </q-input>
+</q-card-section>
+
+<q-separator />
+
+<q-card-section>
+  <q-table
+    title="Normas"
+    :rows="normasFiltradas"
+    :columns="columns"
+    row-key="id"
+  >
+    <template v-slot:body-cell-acoes="{ row }">
+      <div class="row items-center q-gutter-sm" style="flex-wrap: nowrap;">
+        <q-btn
+          icon="picture_as_pdf"
+          color="red"
+          round
+          size="sm"
+          @click="verPDF(row)"
+        />
+        <q-btn
+          icon="edit"
+          color="yellow"
+          round
+          size="sm"
+          @click="abrirEdicao(row.id)"
+        />
+        <q-btn
+          icon="toggle_on"
+          color="black"
+          round
+          size="sm"
+          @click="setStatusNorma(row.id)"
+        />
+        <q-btn
+          icon="delete"
+          color="purple"
+          round
+          size="sm"
+          @click="deleteNorma(row.id)"
+        />
+      </div>
+    </template>
+  </q-table>
+</q-card-section>
+
+</q-card>
+
 
  <q-dialog v-model="abrirCardEdicao" >
   <q-card class="q-pa-md q-mt-md" style="max-width: 900px; width: 100%;">

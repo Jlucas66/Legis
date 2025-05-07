@@ -1,41 +1,51 @@
 <template>
-    <q-input
-        filled
-        v-model="pesquisa"
-        label="Pesquisar"
-        clearable
-        >
-            <template v-slot:append>
-                <q-icon name="search" />
-            </template>
-    </q-input>
+    <q-card class="q-pa-md">
 
-    <q-table
-        title="Órgãos"
-        :rows="orgaosFiltrados"
-        :columns="columns"
-        row-key="id"
-    >
-    <template v-slot:body-cell-acoes="{ row }">
-        <div class="row items-center q-gutter-sm" style="flex-wrap: nowrap">
-            <q-btn 
-                icon="edit"
-                color="yellow" 
-                round
-                size="sm" 
-                @click="abrirEdicaoCategorias(row.id)"
-            />
-
-            <q-btn 
-                icon="toggle_on"
-                color="black" 
-                round
-                size="sm" 
-                @click="excluirOrgao(row.id)"
-            />    
-        </div>
+<q-card-section>
+  <q-input
+    filled
+    v-model="pesquisa"
+    label="Pesquisar"
+    clearable
+  >
+    <template v-slot:append>
+      <q-icon name="search" />
     </template>
-    </q-table>    
+  </q-input>
+</q-card-section>
+
+<q-separator />
+
+<q-card-section>
+  <q-table
+    title="Órgãos"
+    :rows="orgaosFiltrados"
+    :columns="columns"
+    row-key="id"
+  >
+    <template v-slot:body-cell-acoes="{ row }">
+      <div class="row items-center q-gutter-sm" style="flex-wrap: nowrap">
+        <q-btn 
+          icon="edit"
+          color="yellow" 
+          round
+          size="sm" 
+          @click="abrirEdicaoCategorias(row.id)"
+        />
+        <q-btn 
+          icon="toggle_on"
+          color="black" 
+          round
+          size="sm" 
+          @click="excluirOrgao(row.id)"
+        />    
+      </div>
+    </template>
+  </q-table>
+</q-card-section>
+
+</q-card>
+
 
 
 <q-dialog v-model="abrirCardEdicaoOrgaos">
