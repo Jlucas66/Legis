@@ -19,7 +19,7 @@
 <q-card-section>
   <q-table
     title="Normas"
-    :rows="normasFiltradas"
+    :rows="normasFiltradasUser"
     :columns="columns"
     row-key="id"
   >
@@ -96,7 +96,7 @@ export default defineComponent({
             }
         }
 
-        const normasFiltradas = computed(() => {
+        const normasFiltradasUser = computed(() => {
             return normas.value.filter((norma) => {
                 return (
                     norma.orgao.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
@@ -104,9 +104,10 @@ export default defineComponent({
                     norma.numero.toString().includes(pesquisa.value) ||
                     norma.data.toString().includes(pesquisa.value) ||
                     norma.ementa.toLowerCase().includes(pesquisa.value.toLowerCase())
-                )
-            })
-        })
+                );
+            });
+        });
+
 
         const verPDF = async (norma) => {
             try {
@@ -121,9 +122,10 @@ export default defineComponent({
         return {
             normas,
             columns,
-            normasFiltradas,
+            normasFiltradasUser,
             verPDF,
-            getPosts
+            getPosts,
+            pesquisa
          }
         }
 })

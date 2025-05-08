@@ -2,6 +2,15 @@
     <q-card class="q-pa-md">
 
 <q-card-section>
+  <q-btn
+    icon="add"
+    label="Adicionar Novo Órgão"
+    color="black"
+    class="full-width q-mt-md"
+    @click="abrirCardAdicaoOrgaos = true"
+  />
+</q-card-section>        
+<q-card-section>
   <q-input
     filled
     v-model="pesquisa"
@@ -128,11 +137,13 @@ export default defineComponent({
         }
 
         const orgaosFiltrados = computed(() => {
-            return orgaos.value.filter((orgaos) => {
-                return orgaos.nome.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
-                    orgaos.status.toLowerCase().includes(pesquisa.value.toLowerCase())
-            })
-        })
+            return orgaos.value.filter((orgao) => {
+            return (
+                (orgao.nome && orgao.nome.toLowerCase().includes(pesquisa.value.toLowerCase())) ||
+                (orgao.ativo && orgao.ativo.toLowerCase().includes(pesquisa.value.toLowerCase()))
+            );
+            });
+        });
 
         const excluirOrgao = async (id) => {
             try {
