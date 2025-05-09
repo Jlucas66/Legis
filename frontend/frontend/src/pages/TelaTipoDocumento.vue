@@ -40,7 +40,7 @@
                 color="yellow" 
                 round
                 size="sm" 
-                @click="abrirCardEdicaoDocumento = true"
+                @click="abrirEdicaoDocumento(row.id)"
               />
               <q-btn 
                 icon="toggle_on"
@@ -52,17 +52,9 @@
             </div>
           </template>
         </q-table>
-  
-        <q-btn 
-          label="Novo Documento"
-          color="primary"
-          @click="abrirCardAdicaoDocumento = true"
-          class="q-mt-md"
-        />
       </q-card-section>
     </q-card>
   
-    <!-- Diálogo de edição -->
     <q-dialog v-model="abrirCardEdicaoDocumento">
       <q-card class="q-pa-md" style="max-width: 900px; width: 100%;">
         <q-card-section>
@@ -71,16 +63,23 @@
   
         <q-card-section class="q-gutter-md">
           <q-input v-model="documentosParaEditar.nome" label="Nome" filled/>
+
+          <q-select
+          v-model="documentosParaEditar.categoria"
+          :options="orgaosDisponiveis.map(orgao => orgao.nome)"
+          label="Órgão"
+          filled
+          />
         </q-card-section>
   
         <q-card-actions>
-          <q-btn label="Salvar" color="black" @click="salvarEdicaoDocumento" />
           <q-btn label="Cancelar" color="grey" @click="abrirCardEdicaoDocumento = false" />
+          <q-btn label="Salvar" color="black" @click="salvarEdicaoDocumento" />
         </q-card-actions>
       </q-card>
     </q-dialog>
   
-    <!-- Diálogo de adição -->
+
     <q-dialog v-model="abrirCardAdicaoDocumento">
       <q-card class="q-pa-md" style="max-width: 900px; width: 100%;">
         <q-card-section>
@@ -90,6 +89,12 @@
         <q-card-section class="q-gutter-md">
           <q-input v-model="documentosParaAdicionar.nome" label="Nome" filled/>
         </q-card-section>
+        <q-select
+          v-model="documentosParaAdicionar.categoria"
+          :options="orgaosDisponiveis.map(orgao => orgao.nome)"
+          label="Órgão"
+          filled
+          />
   
         <q-card-actions>
           <q-btn label="Cancelar" color="grey" @click="abrirCardAdicaoDocumento = false" />
@@ -113,31 +118,32 @@ export default defineComponent({
     const abrirCardAdicaoDocumento = ref(false);
     const abrirCardEdicaoDocumento = ref(false);
     const pesquisa = ref('');
+    const orgaos = ref([]);
     const documentos = ref([]);
+    const orgaosDisponiveis = ref([]);
 
     const columns = ([
-      { name: 'nome', label: 'Descrição', align: 'left', field: 'descricao' },
+      { name: 'nome', label: 'Descrição', align: 'left', field: 'nome' },
       { name: 'categoria', label: 'Órgão Relacionado', align: 'left', field: 'categoria' },
-      { name: 'status', label: 'Status', align: 'left', field: 'situacao' },
+      { name: 'ativo', label: 'Status', align: 'left', field: 'ativo' },
       { name: 'acoes', label: 'Ações', align: 'center', field: 'acoes' }
     ])
 
     const documentosParaEditar = ref({
       id: null,
       nome: '',
-      categoria: '',
-      situacao: ''
+      categoria: ''
     })
 
 
     const documentosParaAdicionar = ref({
       nome: '',
-      categoria: '',
-      situacao: ''
+      categoria: ''
     })
 
     onMounted(() => {
       fetchDocumento();
+      fetchTiposCategorias();
     });
 
     const fetchDocumento = async () => {
@@ -150,11 +156,30 @@ export default defineComponent({
       }
     }
 
+    const fetchTiposCategorias = async () => {
+      try {
+        const response = await axios.get(`${url}/api/categorias/`);
+        orgaosDisponiveis.value = response.data || [];
+      } catch (error) {
+        console.error('Erro ao buscar tipos de categorias:', error);
+        orgaosDisponiveis.value = [];
+      }
+    }
+
+    const orgaosFiltrados = computed(() => {
+      return orgaos.value.filter((orgao) => {
+        return (
+          (orgao.nome && orgao.nome.toLowerCase().includes(pesquisa.value.toLowerCase()))
+        );
+      });
+    });
+
     const documentosFiltrados = computed(() => {
       return documentos.value.filter((documento) => {
         return (
       documento.nome.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
-      documento.categoria.toLowerCase().includes(pesquisa.value.toLowerCase())
+      documento.categoria.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
+      documento.ativo.toLowerCase().includes(pesquisa.value.toLowerCase())
       
         );
       });
@@ -187,40 +212,47 @@ export default defineComponent({
       }
     }
 
-    function salvarEdicaoDocumento() {
-      axios.put(`${url}/api/documentos/modificar-Documento${documentosParaEditar.value.id}`, documentosParaEditar.value)
-        .then(() => {
-          $q.notify({
-            type: 'positive',
-            message: 'Documento editado com sucesso!'
-          });
+    const abrirEdicaoDocumento = async (id) => {
+      try{
+        const response = await axios.get(`${url}/api/documentos/listar-para-edicao/${id}`)
+        if (response.status === 200) {
+          documentosParaEditar.value = {...response.data };
+          abrirCardEdicaoDocumento.value = true;
+        }
+      } catch (error) {
+        console.error('Erro ao abrir edição de documento:', error);
+        $q.notify({ type: 'negative', message: 'Erro ao abrir edição de documento.' });
+      }
+    }
+
+    const salvarEdicaoDocumento = async () => {
+      try{
+        const response = await axios.put(`${url}/api/documentos/modificar-Documento/${documentosParaEditar.value.id}`, documentosParaEditar.value);
+        if ( response.status === 200) {
+          $q.notify({ message: 'Documento editado com sucesso!', color: 'positive'})
           abrirCardEdicaoDocumento.value = false;
-          fetchDocumento();
-        })
-        .catch(error => {
-          console.error('Erro ao editar documento:', error);
-        });
+          await fetchDocumento();
+        } else { 
+          throw new Error('Erro ao editar documento no servidor'); 
+        }
+      } catch (error) {
+        console.error('Erro ao editar documento:', error);
+        $q.notify({ type: 'negative', message: 'Erro ao editar documento.' });
+      }
     }
 
     const salvarAdicaoDocumento = async () => {
         try {
             const response = await fetch(`${url}/api/documentos/adicionar-Documento`, {
+            nome: documentosParaAdicionar.value.nome,
+            categoria: documentosParaAdicionar.value.categoria,
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                nome: documentosParaAdicionar.value.nome,
-                categoria: documentosParaAdicionar.value.categoria,
-                situacao: documentosParaAdicionar.value.situacao,
-                orgaoId: documentosParaAdicionar.value.orgaoSelecionado // se estiver usando órgão
-            })
+            body: JSON.stringify(documentosParaAdicionar.value)
             });
-
-            if (!response.ok) {
-             throw new Error('Erro ao salvar documento no servidor');
-            }
-
+            console.log(response);
             abrirCardAdicaoDocumento.value = false;
             fetchDocumento();
              $q.notify({ type: 'positive', message: 'Documento adicionado com sucesso.' });
@@ -240,10 +272,14 @@ export default defineComponent({
       pesquisa,
       documentos,
       documentosFiltrados,
+      abrirEdicaoDocumento,
       fetchDocumento,
+      fetchTiposCategorias,
       excluirDocumento,
       salvarEdicaoDocumento,
       salvarAdicaoDocumento,
+      orgaosFiltrados,
+      orgaosDisponiveis,
       documentosParaEditar,
       documentosParaAdicionar
     };

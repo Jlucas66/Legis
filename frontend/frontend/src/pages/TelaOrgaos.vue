@@ -10,6 +10,9 @@
     @click="abrirCardAdicaoOrgaos = true"
   />
 </q-card-section>        
+
+<q-separator />
+
 <q-card-section>
   <q-input
     filled
@@ -39,7 +42,7 @@
           color="yellow" 
           round
           size="sm" 
-          @click="abrirEdicaoCategorias(row.id)"
+          @click="abrirEdicaoOrgaos(row.id)"
         />
         <q-btn 
           icon="toggle_on"
@@ -83,8 +86,13 @@
 
         <q-card-section class="q-gutter-mds">
             <q-input v-model="novoOrgao.nome" label="Nome" filled/>
-            <q-select v-model="novoOrgao.situacao" label="Status" :options="['Ativo', 'Inativo']" />
+            <q-select v-model="novoOrgao.ativo" label="Status" :options="['Ativo', 'Inativo']" />
         </q-card-section>
+
+        <q-card-actions>
+            <q-btn flat label="Cancelar" color="grey" @click="abrirCardAdicaoOrgaos = false" />
+            <q-btn label="Salvar" color="black" @click="salvarNovoOrgao" />
+        </q-card-actions>
     </q-card>
 </q-dialog>
 
@@ -114,12 +122,12 @@ export default defineComponent({
         const orgaosParaEditar = ref({
             id: null,
             nome: '',
-            status: '',
+            ativo: '',
         })
 
         const novoOrgao = ref({
             nome: '',
-            status: '',
+            ativo: '',
         })
 
         onMounted( async () => {
@@ -173,7 +181,7 @@ export default defineComponent({
             }
         }
 
-        const abrirEdicaoCategorias = async (id) => {
+        const abrirEdicaoOrgaos = async (id) => {
             try {
                 const response = await axios.get(`${url}/api/categorias/listar-para-edicao/${id}`)
                 if (response.data) {
@@ -206,17 +214,19 @@ export default defineComponent({
         const salvarNovoOrgao = async () => {
             try {
                 const response = await fetch(`${url}/api/categorias/adicionarOrgao`, {
-                    nome: novoOrgao.value.nome,
-                    status : novoOrgao.value.status,
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(novoOrgao.value)
+                nome: novoOrgao.value.nome,
+                ativo : novoOrgao.value.status,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(novoOrgao.value)
                 });
                 console.log(response)
                 abrirCardAdicaoOrgaos.value = false;
                 await fetchOrgaos()
+
+                $q.notify({ message: 'Órgão adicionada com sucesso.', color: 'green', icon: 'check' });
             } catch (error) {
                 console.error('Erro ao salvar novo órgão:', error)
                 $q.notify({ message: 'Erro ao salvar novo órgão', color: 'negative' })
@@ -241,7 +251,8 @@ export default defineComponent({
             salvarEdicaoOrgao,
             salvarNovoOrgao,
             abrirCardEdicaoOrgaos,
-            abrirEdicaoCategorias
+            abrirCardAdicaoOrgaos,
+            abrirEdicaoOrgaos
         }
     }
 })    
