@@ -55,7 +55,8 @@
       </q-card-section>
     </q-card>
   
-    <q-dialog v-model="abrirCardEdicaoDocumento">
+    <q-dialog 
+    v-model="abrirCardEdicaoDocumento">
       <q-card class="q-pa-md" style="max-width: 900px; width: 100%;">
         <q-card-section>
           <div class="text-h6">Edição de Documento</div>
@@ -66,8 +67,11 @@
 
           <q-select
           v-model="documentosParaEditar.categoria"
-          :options="orgaosDisponiveis.map(orgao => orgao.nome)"
+          :options="orgaosDisponiveis.categoria"
+          :options-label="orgao => orgao.nome"
           label="Órgão"
+          emit-value
+          map-options
           filled
           />
         </q-card-section>
@@ -93,6 +97,8 @@
           v-model="documentosParaAdicionar.categoria"
           :options="orgaosDisponiveis.map(orgao => orgao.nome)"
           label="Órgão"
+          emit-value
+          map-options
           filled
           />
   
@@ -160,6 +166,7 @@ export default defineComponent({
       try {
         const response = await axios.get(`${url}/api/categorias/`);
         orgaosDisponiveis.value = response.data || [];
+        console.log('Tipos de categorias:', orgaosDisponiveis.value);
       } catch (error) {
         console.error('Erro ao buscar tipos de categorias:', error);
         orgaosDisponiveis.value = [];
