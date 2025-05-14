@@ -30,13 +30,6 @@
             />
           </div>
       </q-card-section>
-
-
-
-
-
-
-
         <q-table
           title="Documentos"
           :rows="documentosFiltrados"
@@ -77,11 +70,10 @@
 
           <q-select
           v-model="documentosParaEditar.categoria"
-          :options="orgaosDisponiveis.categoria"
-          :options-label="orgao => orgao.nome"
+          :options="orgaosDisponiveis"
+          option-value="id"
+          option-label="nome"
           label="Órgão"
-          emit-value
-          map-options
           filled
           />
         </q-card-section>
@@ -105,10 +97,10 @@
         </q-card-section>
         <q-select
           v-model="documentosParaAdicionar.categoria"
-          :options="orgaosDisponiveis.map(orgao => orgao.nome)"
+          :options="orgaosDisponiveis"
+          option-value="id"
+          option-label="nome"
           label="Órgão"
-          emit-value
-          map-options
           filled
           />
   
@@ -148,13 +140,22 @@ export default defineComponent({
     const documentosParaEditar = ref({
       id: null,
       nome: '',
-      categoria: ''
+      ativo: true,
+      categoria: {
+        id: null,
+        nome: ''
+      }
     })
 
 
     const documentosParaAdicionar = ref({
+      id: null,
       nome: '',
-      categoria: ''
+      ativo: true,
+      categoria: {
+        id: null,
+        nome: ''
+      }    
     })
 
     onMounted(() => {
@@ -249,6 +250,7 @@ export default defineComponent({
           $q.notify({ message: 'Documento editado com sucesso!', color: 'positive'})
           abrirCardEdicaoDocumento.value = false;
           await fetchDocumento();
+          await fetchTiposCategorias();
         } else { 
           throw new Error('Erro ao editar documento no servidor'); 
         }
@@ -272,6 +274,7 @@ export default defineComponent({
             console.log(response);
             abrirCardAdicaoDocumento.value = false;
             fetchDocumento();
+            fetchTiposCategorias();
              $q.notify({ type: 'positive', message: 'Documento adicionado com sucesso.' });
     
         } catch (error) {
