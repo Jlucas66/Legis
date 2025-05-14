@@ -1,17 +1,5 @@
 <template>
-    <q-card class="q-pa-md">
-
-<q-card-section>
-  <q-btn
-    icon="add"
-    label="Adicionar Novo Órgão"
-    color="black"
-    class="full-width q-mt-md"
-    @click="abrirCardAdicaoOrgaos = true"
-  />
-</q-card-section>        
-
-<q-separator />
+    <q-card class="q-pa-md">   
 
 <q-card-section>
   <q-input
@@ -29,6 +17,24 @@
 <q-separator />
 
 <q-card-section>
+    <q-card-section>
+        <div class="row justify-end">
+            <q-btn
+            icon="add"
+            label=""
+            color="black"
+            class="q-mt-md"
+            size="md"
+            style="width: 80px; height: 50px;"
+            @click="abrirCardAdicaoOrgaos = true"
+            />
+        </div>
+    </q-card-section>      
+
+
+
+
+
   <q-table
     title="Órgãos"
     :rows="orgaosFiltrados"

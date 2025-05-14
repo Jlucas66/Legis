@@ -36,12 +36,6 @@
             required
             class="q-mb-md"
           />
-          <!-- <q-btn
-            label="Verificar"
-            color="primary"
-            @click="executeCaptcha"
-            class="q-mb-md"
-          /> -->
           <div class="row items-center q-mt-md">
             <q-btn type="submit" label="Entrar" color="black" width="100px" height="120px"  @click="$router.push('')"/>
           </div> <br/>

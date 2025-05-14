@@ -1,15 +1,5 @@
 <template>
     <q-card class="q-pa-md">
-
-      <q-card-section>
-        <q-btn
-          icon="add"
-          label="Adicionar Novo Documento"
-          color="black"
-          class="full-width q-mt-md"
-          @click="abrirCardAdicaoDocumento = true"
-        />
-      </q-card-section>
   
       <q-card-section>
         <q-input
@@ -27,6 +17,26 @@
       <q-separator />
   
       <q-card-section>
+        <q-card-section>
+          <div class="row justify-end">
+            <q-btn
+              icon="add"
+              label=""
+              color="black"
+              class="q-mt-md"
+              size="md"
+              style="width: 80px; height: 50px;"
+              @click="abrirCardAdicaoDocumento = true"
+            />
+          </div>
+      </q-card-section>
+
+
+
+
+
+
+
         <q-table
           title="Documentos"
           :rows="documentosFiltrados"
