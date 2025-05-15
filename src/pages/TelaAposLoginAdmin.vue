@@ -84,7 +84,14 @@
     </q-card-section>
 
   <q-card-section class="q-gutter-md">
-    <q-input v-model="normaParaEditar.orgao" label="Órgão" filled />
+    <q-select
+    v-model="normaParaEditar.categoria.nome"
+    :options="orgaosDisponiveis"
+    option-value="id"
+    option-label="nome"
+    label="Órgão"
+    filled
+    />
     <q-input v-model="normaParaEditar.tipo" label="Tipo" filled />
     <q-input v-model="normaParaEditar.numero" label="Número" filled />
     <q-input v-model="normaParaEditar.data" label="Data" type="date" filled />
@@ -107,7 +114,14 @@
     </q-card-section>
 
     <q-card-section class="q-gutter-md">
-      <q-input v-model="novaNorma.orgao" label="Órgão" filled />
+      <q-select
+      v-model="novaNorma.categoria.nome"
+      :options="orgaosDisponiveis"
+      option-value="id"
+      option-label="nome"
+      label="Órgão"
+      filled
+      />
       <q-input v-model="novaNorma.tipo" label="Tipo" filled />
       <q-input v-model="novaNorma.numero" label="Número" filled />
       <q-input v-model="novaNorma.data" label="Data" type="date" filled />
@@ -140,10 +154,11 @@ export default defineComponent({
         const normasAdmin = ref([])
         const $q = useQuasar()
         const abrirCardEdicao = ref(false);
+        const orgaosDisponiveis = ref([]);
         const abrirCardNovaNorma = ref(false);
         
         const columns = [
-            { name: 'orgao', label: 'Órgão', align: 'left', field: 'orgao', sortable: true },
+            { name: 'categoria', label: 'Órgão', align: 'left', field: 'categoria', sortable: true },
             { name: 'tipo', label: 'Tipo de Documento', align: 'left', field: 'tipo', sortable: true },
             { name: 'numero', label: 'Número', align: 'left', field: 'numero', sortable: true },
             { name: 'data', label: 'Data', align: 'left', field: 'data', sortable: true },
@@ -154,43 +169,61 @@ export default defineComponent({
 
         const normaParaEditar = ref({
           id: null,
-          orgao: '',
           tipo: '',
           numero: '',
           data: '',
           ementa: '',
-          ativo: false,
-          statusDisponivel: false
+          ativo: true,
+          statusDisponivel: true,
+          categoria: {
+            id: null,
+            nome: ''
+          }
         });
 
         const novaNorma = ref({
-          orgao: '',
           tipo: '',
           numero: '',
           data: '',
           ementa: '',
-          ativo: false,
-          statusDisponivel: false
+          ativo: true,
+          statusDisponivel: true,
+          categoria:{
+            id: null,
+            nome: ''
+          }
         });
         
 
         onMounted( async () => {
           await fetchNormas();
+          fetchTiposCategorias();
         })
 
         const normasFiltradas = computed(() => {
             return normasAdmin.value.filter((normasAdmin) => {
               if (!normasAdmin || !normasAdmin.orgao) return false;
                 return (
-                    normasAdmin.orgao.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
-                    normasAdmin.tipo.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
-                    normasAdmin.numero.toString().includes(pesquisa.value) ||
-                    normasAdmin.data.toString().includes(pesquisa.value) ||
-                    normasAdmin.statusDisponivel.toString().includes(pesquisa.value) ||
-                    normasAdmin.ementa.toLowerCase().includes(pesquisa.value.toLowerCase())
+                  normasAdmin.categoria.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
+                  normasAdmin.tipo.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
+                  normasAdmin.numero.toString().includes(pesquisa.value) ||
+                  normasAdmin.data.toString().includes(pesquisa.value) ||
+                  normasAdmin.statusDisponivel.toString().includes(pesquisa.value) ||
+                  normasAdmin.ementa.toLowerCase().includes(pesquisa.value.toLowerCase())
                 )
             })
         })
+
+        const fetchTiposCategorias = async () => {
+          try {
+            const response = await axios.get(`${url}/api/categorias/`);
+            orgaosDisponiveis.value = response.data || [];
+            console.log('Tipos de categorias:', orgaosDisponiveis.value);
+          } catch (error) {
+              console.error('Erro ao buscar tipos de categorias:', error);
+              orgaosDisponiveis.value = [];
+          }
+        }
         
 
         const verPDF = async (norma) => {
@@ -230,7 +263,7 @@ export default defineComponent({
         const salvarNovaNorma = async () => {
             try {
               const response = await fetch(`${url}/api/normas/adicionar`, {
-              orgao: novaNorma.value.orgao,
+              categoria: novaNorma.value.orgao,
               tipo: novaNorma.value.tipo,
               numero: novaNorma.value.numero,
               data: novaNorma.value.data,
@@ -335,6 +368,7 @@ export default defineComponent({
             novaNorma,
             abrirEdicao,
             fetchNormas,
+            fetchTiposCategorias,
             setStatusNorma,
             salvarEdicaoNorma,
             salvarNovaNorma,

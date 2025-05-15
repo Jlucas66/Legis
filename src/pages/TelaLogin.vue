@@ -73,7 +73,6 @@ const onSubmit = async () => {
     }
     const fullURL = `${url}/api/login`
     const resposta = await axios.post(fullURL, body)
-    console.log('Resposta do login:', resposta)
     if (resposta.status === 200) {
       router.push({ name: 'TelaAdmin' })
     } else {
@@ -86,17 +85,7 @@ const onSubmit = async () => {
     onReset()
   }
 }
-// const fullEmail = email.value + emailDomain
-//   if (email.value && password.value) {
-//     console.log('E-mail:', fullEmail)
-//     console.log('Senha:', password.value)
-//     alert(`Login realizado com sucesso com o email: ${fullEmail}`)
-//     onReset()
-//   } else {
-//     alert('Por favor, preencha todos os campos.')
-//   }
 
-// Função chamada ao resetar o formulário
 const onReset = () => {
   email.value = ''
   password.value = ''

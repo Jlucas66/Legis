@@ -69,7 +69,7 @@ export default defineComponent({
         const normas = ref([])
 
         const columns = ([
-            { name: 'orgao', label: 'Órgão', align: 'left', field: 'orgao', sortable: true },
+            { name: 'categoria', label: 'Órgão', align: 'left', field: 'categoria', sortable: true },
             { name: 'tipo', label: 'Tipo de Documento', align: 'left', field: 'tipo', sortable: true },
             { name: 'numero', label: 'Número', align: 'left', field: 'numero', sortable: true },
             { name: 'data', label: 'Data', align: 'left', field: 'data', sortable: true },
@@ -81,6 +81,7 @@ export default defineComponent({
             try {
                 console.log('URL', `${url}/api/normas`)
                 const resposta = await axios.get(`${url}/api/normas`)
+                console.log('Resposta da API:', resposta.data)
                 normas.value = resposta.data
             } catch (error) {
                 console.error('Erro ao buscar posts:', error)
@@ -99,7 +100,7 @@ export default defineComponent({
         const normasFiltradasUser = computed(() => {
             return normas.value.filter((norma) => {
                 return (
-                    norma.orgao.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
+                    norma.categoria.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
                     norma.tipo.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
                     norma.numero.toString().includes(pesquisa.value) ||
                     norma.data.toString().includes(pesquisa.value) ||
