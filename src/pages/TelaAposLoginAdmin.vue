@@ -85,7 +85,7 @@
 
   <q-card-section class="q-gutter-md">
     <q-select
-    v-model="normaParaEditar.categoria.nome"
+    v-model="normaParaEditar.categoria"
     :options="orgaosDisponiveis"
     option-value="id"
     option-label="nome"
@@ -115,7 +115,7 @@
 
     <q-card-section class="q-gutter-md">
       <q-select
-      v-model="novaNorma.categoria.nome"
+      v-model="novaNorma.categoria"
       :options="orgaosDisponiveis"
       option-value="id"
       option-label="nome"
@@ -158,7 +158,7 @@ export default defineComponent({
         const abrirCardNovaNorma = ref(false);
         
         const columns = [
-            { name: 'categoria', label: 'Órgão', align: 'left', field: 'categoria', sortable: true },
+            { name: 'categoria', label: 'Órgão', align: 'left', field: row => row.categoria?? '', sortable: true },
             { name: 'tipo', label: 'Tipo de Documento', align: 'left', field: 'tipo', sortable: true },
             { name: 'numero', label: 'Número', align: 'left', field: 'numero', sortable: true },
             { name: 'data', label: 'Data', align: 'left', field: 'data', sortable: true },
@@ -201,15 +201,14 @@ export default defineComponent({
         })
 
         const normasFiltradas = computed(() => {
-            return normasAdmin.value.filter((normasAdmin) => {
-              if (!normasAdmin || !normasAdmin.orgao) return false;
+            return normasAdmin.value.filter((norma) => {
                 return (
-                  normasAdmin.categoria.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
-                  normasAdmin.tipo.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
-                  normasAdmin.numero.toString().includes(pesquisa.value) ||
-                  normasAdmin.data.toString().includes(pesquisa.value) ||
-                  normasAdmin.statusDisponivel.toString().includes(pesquisa.value) ||
-                  normasAdmin.ementa.toLowerCase().includes(pesquisa.value.toLowerCase())
+                  norma.categoria?.nome?.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
+                  norma.tipo?.toLowerCase().includes(pesquisa.value.toLowerCase()) ||
+                  norma.numero?.toString().includes(pesquisa.value) ||
+                  norma.data?.toString().includes(pesquisa.value) ||
+                  norma.statusDisponivel?.toString().includes(pesquisa.value) ||
+                  norma.ementa?.toLowerCase().includes(pesquisa.value.toLowerCase())
                 )
             })
         })
@@ -240,7 +239,8 @@ export default defineComponent({
         const fetchNormas = async () => {
           try {
                 const resposta = await axios.get(`${url}/api/normas/admin`)
-                normasAdmin.value = resposta.data || [];
+                normasAdmin.value = resposta.data;
+                console.log('Normas:', normasAdmin.value);
             } catch (error) {
                 console.error('Erro ao buscar posts:', error)
                 normasAdmin.value = [];
@@ -263,7 +263,7 @@ export default defineComponent({
         const salvarNovaNorma = async () => {
             try {
               const response = await fetch(`${url}/api/normas/adicionar`, {
-              categoria: novaNorma.value.orgao,
+              categoria: novaNorma.value.categoria,
               tipo: novaNorma.value.tipo,
               numero: novaNorma.value.numero,
               data: novaNorma.value.data,
