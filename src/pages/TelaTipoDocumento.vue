@@ -94,8 +94,7 @@
   
         <q-card-section class="q-gutter-md">
           <q-input v-model="documentosParaAdicionar.nome" label="Nome" filled/>
-        </q-card-section>
-        <q-select
+                    <q-select
           v-model="documentosParaAdicionar.categoria"
           :options="orgaosDisponiveis"
           option-value="id"
@@ -103,7 +102,7 @@
           label="Órgão"
           filled
           />
-  
+        </q-card-section>
         <q-card-actions>
           <q-btn label="Cancelar" color="grey" @click="abrirCardAdicaoDocumento = false" />
           <q-btn label="Salvar" color="black" @click="salvarAdicaoDocumento" />

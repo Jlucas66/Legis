@@ -85,7 +85,7 @@
 
   <q-card-section class="q-gutter-md">
     <q-select
-    v-model="normaParaEditar.categoria"
+    v-model="normaParaEditar.categoria.id"
     :options="orgaosDisponiveis"
     option-value="id"
     option-label="nome"
@@ -115,7 +115,7 @@
 
     <q-card-section class="q-gutter-md">
       <q-select
-      v-model="novaNorma.categoria"
+      v-model="novaNorma.categoria.id"
       :options="orgaosDisponiveis"
       option-value="id"
       option-label="nome"
@@ -129,7 +129,6 @@
       <q-toggle v-model="novaNorma.ativo" label="Ativo" />
       <q-toggle v-model="novaNorma.statusDisponivel" label="Status Disponível" />
     </q-card-section>
-
     <q-card-actions>
       <q-btn flat label="Cancelar" color="grey" @click="abrirCardNovaNorma = false" />
       <q-btn label="Salvar" color="black" @click="salvarNovaNorma" />
@@ -182,6 +181,7 @@ export default defineComponent({
         });
 
         const novaNorma = ref({
+          id: null,
           tipo: '',
           numero: '',
           data: '',
@@ -240,7 +240,6 @@ export default defineComponent({
           try {
                 const resposta = await axios.get(`${url}/api/normas/admin`)
                 normasAdmin.value = resposta.data;
-                console.log('Normas:', normasAdmin.value);
             } catch (error) {
                 console.error('Erro ao buscar posts:', error)
                 normasAdmin.value = [];
@@ -263,7 +262,7 @@ export default defineComponent({
         const salvarNovaNorma = async () => {
             try {
               const response = await fetch(`${url}/api/normas/adicionar`, {
-              categoria: novaNorma.value.categoria,
+              categoria: { id: novaNorma.value.categoria.id },
               tipo: novaNorma.value.tipo,
               numero: novaNorma.value.numero,
               data: novaNorma.value.data,
@@ -344,7 +343,10 @@ export default defineComponent({
 
     const salvarEdicaoNorma = async () => {
       try {
-        const response = await axios.put(`${url}/api/normas/modificar/${normaParaEditar.value.id}`, normaParaEditar.value);
+        const response = await axios.put(`${url}/api/normas/modificar/${normaParaEditar.value.id}`, {
+          ...normaParaEditar.value,
+          categoria: { id: normaParaEditar.value.categoria.id },
+        });
         if (response.status === 200) {
           $q.notify({ message: 'Norma atualizada com sucesso.', color: 'green', icon: 'check' });
           abrirCardEdicao.value = false;
