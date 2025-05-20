@@ -2,7 +2,7 @@
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
 import { defineConfig } from '#q-app/wrappers'
-import { Notify } from 'quasar'
+// Removed unused Notify import
 
 export default defineConfig((/* ctx */) => {
   return {
@@ -40,6 +40,10 @@ export default defineConfig((/* ctx */) => {
       target: {
         browser: [ 'es2022', 'firefox115', 'chrome115', 'safari14' ],
         node: 'node20'
+      },
+      env:{
+        VITE_API_URL: process.env.VITE_API_URL || 'http://localhost:3000',
+        VITE_API_URL_PDF: process.env.VITE_API_URL_PDF || 'https://legis.policiacivil.pe.gov.br/b/api/files/'
       },
 
       vueRouterMode: 'hash', // available values: 'hash', 'history'

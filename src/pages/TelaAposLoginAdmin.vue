@@ -160,7 +160,7 @@ export default defineComponent({
             { name: 'categoria', label: 'Órgão', align: 'left', field: row => row.categoria?? '', sortable: true },
             { name: 'tipo', label: 'Tipo de Documento', align: 'left', field: 'tipo', sortable: true },
             { name: 'numero', label: 'Número', align: 'left', field: 'numero', sortable: true },
-            { name: 'data', label: 'Data', align: 'left', field: 'data', sortable: true },
+            { name: 'data', label: 'Data', align: 'left', field: 'data', format: val => { const [ano, mes, dia] = val.split('-'); return `${dia}/${mes}/${ano}`}, sortable: true },
             { name: 'ementa', label: 'Ementa', align: 'left', field: 'ementa', sortable: true, style: 'max-width: 750px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' },
             { name: 'statusDisponivel', label: 'Status', align: 'left', field: 'statusDisponivel', sortable: true },
             { name: 'acoes', label: 'Ações', align: 'center', field: 'acoes', sortable: true, style: 'min-width: 120px' },

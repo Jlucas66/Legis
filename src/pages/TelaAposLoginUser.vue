@@ -1,6 +1,19 @@
 <template>
 <q-card class="q-pa-md">
 
+  <q-card-section>
+  <div class="row justify-end q-mt-md">
+    <q-btn
+      type="submit"
+      label="Normas Internas"
+      color="black"
+      class="q-mt-md"
+      style="width: 100px; height: 70px;"
+      :to="{ name: 'TelaLogin' }"
+    />
+  </div>
+</q-card-section>
+
 <q-card-section>
   <q-input
     filled
@@ -37,20 +50,6 @@
   </q-table>
 </q-card-section>
 
-<q-separator />
-
-<q-card-section>
-  <div class="row items-center q-mt-md">
-    <q-btn
-      type="submit"
-      label="Normas Internas"
-      color="black"
-      class="full-width"
-      :to="{ name: 'TelaLogin' }"
-    />
-  </div>
-</q-card-section>
-
 </q-card>
 
 
@@ -72,7 +71,7 @@ export default defineComponent({
             { name: 'categoria', label: 'Órgão', align: 'left', field: 'categoria', sortable: true },
             { name: 'tipo', label: 'Tipo de Documento', align: 'left', field: 'tipo', sortable: true },
             { name: 'numero', label: 'Número', align: 'left', field: 'numero', sortable: true },
-            { name: 'data', label: 'Data', align: 'left', field: 'data', sortable: true },
+            { name: 'data', label: 'Data', align: 'left', field: 'data', format: val => { const [ano, mes, dia] = val.split('-'); return `${dia}/${mes}/${ano}`}, sortable: true },
             { name: 'ementa', label: 'Ementa', align: 'left', field: 'ementa', sortable: true, style: 'max-width: 750px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;' },
             { name: 'acoes', label: 'Ações', align: 'center', field: 'acoes', sortable: true, style: 'max-width: 150px' },
         ])
